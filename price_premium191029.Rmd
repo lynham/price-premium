@@ -1,0 +1,481 @@
+---
+title: "Can Demand-Side Management Replace a Size Limit in a Small-Scale Fishery?"
+author: |
+  Rani Ekawaty^1,2^
+  John Lynham^3^
+  Peter Mous^4^
+date: ^1^Aquatic Resources Management, Udayana University, Indonesia ^2^Institute for Marine and Antarctic Studies, University of Tasmania, Australia Indonesia ^3^Department of Economics,
+  University of Hawaii at Manoa, 2424 Maile Way, Honolulu, HI 96822, USA, lynham@hawaii.edu (Corresponding Author) ^3^The Nature Conservancy, Indonesia
+header-includes:
+    - \usepackage{setspace}
+    - \usepackage{lineno}
+    - \linenumbers
+output:
+  bookdown::pdf_document2:
+    toc: false
+fontsize: 12pt
+bibliography: clean_references.bib
+abstract: Size limits are difficult to enforce in small-scale fisheries in remote locations. We tested whether it is possible to replace a legal minimum size with a randomized-control trial of a voluntary market-based mechanism, namely a price premium for larger fish. We randomly offered fishers in Indonesia a bonus for catching certain species of fish above certain sizes. We observe stark differences in catch as a result. Instead of inducing fishers to catch more fish of every size, the premium caused a shift in the size distribution of catch towards larger fish. The price premium worked well for a large-sized species but had no effect on the catch of a small-sized species, suggesting that fishers are not able to target species but are able to target sizes of fish. In particular, we find that the length of *Aprion virescens* increased by 15% and the average length of all fish caught increased by 8% when fishers were offered the price premium. It does not appear that fishers respond to the premium by high-grading their catch, which would only affect supply and not extraction. The changes appear to be driven by fishers going to different locations and fishing at different depths. Our experiment is the first ever proof-of-concept of Payment for Ecosystem Services in a developing country fishery. Our results also suggest that prices can alter length-frequency distributions, confirming a possible source of bias in length-based stock assessment models.
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Keywords:** size limit; field experiment; eco-label; small-scale fisheries; price premium; payment for ecosystem services
+
+
+**Highlights:**
+
+- We perform the first randomized control trial providing price premiums for larger fish.
+- The price premium worked best for the larger of the species studied.
+- Average length of the catch for the larger species increased by 15%.
+- Average length of all fish caught increased by 8%.
+- We provide proof that economic incentives can bias length-based stock assessment.
+
+\newpage
+
+\doublespacing
+
+# Introduction
+
+## General Introduction
+
+Eco-labels and sustainability guides are now ubiquitous in seafood markets [@jacquet2007rise]. Most of these labels and guides are based on the principle that by altering consumer preferences for more sustainable seafood (demand-side management), this will indirectly lead to changes on the supply side of fisheries production (stricter regulations, less by-catch, etc.).^[See, for example, @caviglia2003demand.] Many eco-labels (such as the Marine Stewardship Council certification) aim to reward fisheries
+that have achieved certain sustainability standards and to encourage
+less sustainable fisheries to adopt better management practices in the
+hope that they can earn eco-label status (and purported higher prices)
+in the future.^[See @lallemand2016estimating, @parkes2016effects, and @stemle2016have.] But, to date, there have been no experimental tests of whether offering fishers an ``eco'' price premium is sufficient incentive to cause fishers to change their day-to-day behavior. Our study is one of the first to shed light on this question.
+
+At the same time, small-scale fisheries in developing countries remain
+one of the more intractable problems in the global fisheries crisis [@andrew2007diagnosis]. Many large-scale industrial fisheries (especially in developed countries) have turned the corner in the last two decades, and populations are recovering or stable in many parts of the world [@worm2009rebuilding; @costello2016global].^[https://www.noaa.gov/media-release/new-record-number-of-overfished-stocks-in-us-reaches-all-time-low Last accessed: August 7th 2019]
+Small-scale fisheries, on the other hand, are often expensive to monitor and take place in settings where regulatory institutions may be weak. This is important because recent estimates suggest that small-scale fisheries account for over 90 percent of employment in the world's capture fisheries [@schuhbauer2016economic]. Governments and Non-Governmental Organizations (NGOs) are searching for management tools that might improve conservation outcomes in small-scale fisheries without requiring large
+amounts of government oversight. One of the most popular fisheries management recommendations in so-called ``data poor'' fisheries is the implementation of a size limit: fishers are only allowed
+to land fish above a certain size (typically proportional to size-at-maturity). By encouraging fishers to only target mature fish, size limits theoretically protect the 
+capacity of a stock to replenish itself by allowing all juveniles a chance to reproduce before they are caught.
+Our study is the first experimental investigation of a market-based mechanism
+designed to simulate a size limit in a setting where it would be financially and administratively challenging to enforce such a limit.
+
+In our study, we experimentally implemented a size-dependent price premium for two fish species caught by small-scale fishers in a remote part of Indonesia. Owing to a pre-existing data collection program, we have extremely precise data on the species and size of every fish caught before and during our experiment. One of the premiums worked extremely well (shifting the size distribution of catch to the right) and the other had no measurable effect on fish size. In particular, we find that the length of *Aprion virescens* increased by 15% and the average length of all fish caught increased by 8% when fishers were offered the price premium. The changes appear to be driven by fishers going to different locations and fishing at greater depths. There is no observed change in the length of \emph{Lutjanus vitta}. Both premiums shed light on the potential and pitfalls of demand-side management approaches in small-scale fisheries. They also highlight how changes in prices could introduce bias in data-poor stock assessment methods [@hordyk2014novel;@dowling2016fishpath]. Our experiment also serves as a proof-of-concept for Payment for Ecosystem Services (PES) in a developing country fishery [@barr2009investigating;@micheli2014system;@bladon2016payments]. PES is commonly defined as a voluntary market-based mechanism where an ecosystem service (or actions
+designed to provide it) is purchased from a "provider" [@wunder2008taking]. In our setting, the primary ecosystem service is increasing fish provision and the action is avoiding smaller immature fish. Additional ecosystem services provided include regulation of food web dynamics and linking services [@holmlund1999ecosystem].
+
+## Background on the Study Site and Fishery
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=7, fig.asp=1, fig.cap="\\label{fig:timpaus}Map showing Indonesia and the approximate location of the study site (yellow diamond marker)."}
+library("ggplot2")
+theme_set(theme_bw())
+library("sf")
+library("rnaturalearth")
+library("rnaturalearthdata")
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+library("ggspatial")
+world_points<- st_centroid(world)
+world_points <- cbind(world, st_coordinates(st_centroid(world$geometry)))
+
+kasuari<-data.frame(longitude=124.023860,latitude=-1.844229)
+
+ggplot(data = world) + 
+geom_sf(fill= "antiquewhite") + 
+geom_text(data= world_points,aes(x=X, y=Y, label=name), color = "darkblue", fontface = "bold", check_overlap = FALSE) + 
+#annotate(geom = "text", x = -90, y = 26, label = "Gulf of Mexico", fontface = "italic", color = "grey22", size = 6) + 
+geom_point(data = kasuari, aes(x = longitude, y = latitude), size = 4, 
+        shape = 23, fill = "yellow") +
+annotation_scale(location = "bl", width_hint = 0.5) + 
+annotation_north_arrow(location = "bl", which_north = "true", pad_x = unit(0.75, "in"), pad_y = unit(0.5, "in"), style = north_arrow_fancy_orienteering) + 
+coord_sf(xlim = c(107.6, 132.85), ylim = c(-10.68, 4.97), expand = FALSE) + 
+xlab("Longitude") + ylab("Latitude") + 
+#ggtitle("Map of Indonesia and the Study Site") + 
+theme(panel.grid.major = element_line(color = gray(.5), linetype = "dashed", size = 0.5), panel.background = element_rect(fill = "aliceblue"))
+
+```
+
+The study site is one of two small villages on a remote island in central Sulawesi, Indonesia (Figures \ref{fig:timpaus} and \ref{fig:bathy}). The population of the village is around 1,000 people. The main livelihood in the village is fishing and  fishers catch snappers, groupers, and other species using small-scale longlines. Other fishers work as crew on purse seine boats or by building fishing boats within the village. Vessels are fairly small (less than 30 feet in length and less than 5 gross tons in weight) and owned and operated by the captains themselves (sometimes with one or two crew members). The group of fishers that participated in the experiment had been working with The Nature Conservancy (TNC) for 1-2 years as part of the Crew Operated Data Recording Systems (CODRS) program, which  is explained in the next section.
+
+Fishing operations are mostly one to two day trips, due to the fishers being limited by the amount of ice and bait they can bring on their small vessels. Operational costs are usually \$50 to \$70 USD per day. Normally these costs are covered by the fisher's "fish collector"" (*pengumpul*) as a loan, whereby the fisher has to sell their catch to the fish collector who also decides on the price of the fish bought. This practice can lead the fisher to be indebted to the fish collector if the catch is less than the operational cost of the trip. Almost all of the fishers in the village are in debt to a fish collector to some extent, and some of the fishers are fish collectors themselves. The other two factors that have a big effect on fishing operations are the availability of ice and bait, which are purchased from a nearby island. Without either ice or bait, the fishers are unable to go fishing. Ice and bait shortages frequently affect fishing operations on this remote island and caused us to delay the start of our experiment by a number of months.
+
+The study site is a very small part of a large fishery spread across the Indonesian archipelago. Indonesia is the world's largest supplier of snapper and grouper species to the global seafood market. Indonesia produces about 78,000 metric tons of catch annually with an estimated retail value of 500 million USD.^[https://www.seafoodsource.com/news/environment-sustainability/norpac-vows-not-to-buy-immature-snapper-and-grouper-from-indonesia Last accessed: August 7th 2019] Recent government assessments within Indonesia found that the fishery (which is fished by an estimated 8,600 vessels, including motorized canoes and large ships) shows signs of over-exploitation. Species are often purchased by buyers in premium, consumer-ready formats, such as pan-sized whole fillets, which often originate from fish that haven’t reached full maturity. In an effort to combat this tendency to value under-sized fish, The Nature Conservancy has signed commitments with major fish buyers in the United States vowing not to buy immature snapper and grouper from Indonesia. The government and the NGO community within Indonesia are actively exploring options to encourage fishers to catch fewer under-sized fish.
+
+# Materials and Methods
+
+## Background on the CODRS Data Program
+
+```{r, echo=FALSE, message=FALSE, results='asis', fig.width=5, fig.asp=1, fig.cap="\\label{fig:CODRS}Example of a photograph used to create the CODRS dataset. Source: TNC Indonesia."}
+library(png)
+library(grid)
+img <- readPNG("/Volumes/GoogleDrive/My Drive/Poseidon/Drafts/figures/CODRS_photo.png")
+ grid.raster(img)
+```
+
+CODRS (Crew Operated Data Recording Systems) is a program run by The Nature Conservancy's Indonesia office. Data on species and size
+distributions of catch (as needed for length-based
+stock assessments) are collected via photographs taken on digital cameras by crew on-board fishing vessels. The fish are positioned over standardized measuring boards before the photographs are taken so their length can be easily inferred (see Figure \ref{fig:CODRS} for a sample photograph). At the end of each month, the memory card from each camera is handed over for processing of the images by fish identification experts working for TNC. Processing includes identification of the species and length of the fish, double-checking by a data quality control coordinator, and storage in an online database known as i-Fish. Participation in the program is voluntary and fishers receive a stipend for participating. Over 300 vessels were operating with CODRS contracts and contributing to the database by February 2019. Double-checking with trader data on total catch, and comparison with
+the weights implied by the fish lengths serves as an additional quality control measure: if the estimated catch weight from the CODRS data differs more than 5% from estimates based
+on the trader data, the catch is marked as incomplete and TNC staff attempt to resolve the discrepancy before the data is included in the online database. The CODRS data collecting system is much more expensive to collect compared to traditional logbook data, but it provides a more accurate reflection of total catch. This catch data is also geo-referenced as the CODRS system works in tandem with a TNC-sponsored vessel tracking system. Fishers voluntarily agree to have a small GPS tracking device on-board their vessels in return for a monthly stipend. The device records latitude and longitude once every hour. At our study site, fishers turn off the device when they are not fishing in order to conserve battery life (there is limited access to electricity on the island). 
+
+## Experimental Design
+
+Seventeen small-scale fishers from the village participate in the
+CODRS program; they represent all of the primary snapper/grouper fishers in the village. We met with all of them in May of 2018 and explained the details of our
+proposed experiment and invited them to voluntarily participate. All seventeen agreed to participate.
+The experiment lasted for four months (September to December 2018) and
+operated as follows. The fishers were randomly assigned to two different
+groups: Group 1 and Group 2. Group 1 faced a set of price premiums in
+September and November of 2018 (eight fishers). Group 2 faced the same premiums in October and December of 2018 (nine fishers). Some of the fishers are more part-time than others and chose to not fish during the experimental period in order to focus on other employment opportunities. In all of the analysis that follows, we restrict the sample to those fishers who fished at least once during the experimental period (six fishers in total, split evenly between the two groups).
+
+The price premiums were as follows: (1) 200,000 Indonesian Rupiah (approximately \$14 in 2018) for every \emph{Aprion virescens} caught sized greater than 80cm and (2) 100,000 Indonesian Rupiah (approximately \$7) for every \emph{Lutjanus vitta} caught sized greater than 32cm. Both sizes are larger than the estimated size-at-maturity for each species. The premiums were designed to more than offset any possible drop in price due to catching larger than plate-sized fish and, by most accounts, were a strong incentive to target these sizes and species. Based on our calculations, the premium for \emph{Aprion virescens} increased the value of an 80cm fish by 250% and, for \emph{Lutjanus vitta}, increased the value of a 32cm fish by 800%. The average monthly wage in Indonesia is around \$280. The maximum payment per fisher was capped at 4.5 million Indonesian Rupiah (\$318). No fishers ended up reaching this cap. 222 fish were caught during the experiment months, of these 21 were \emph{Aprion virescens} and 2 were \emph{Lutjanus vitta}. Species and length were independently verified by analysis of the CODRS photographs by two TNC staff members. Any premiums earned were paid out after the completion of the experiment.
+
+# Results
+```{r, echo=FALSE, message=FALSE}
+library(AER)
+library(stargazer)
+library(ggplot2)
+library(data.table)
+
+#source("clean_up_data.R")
+
+load("/Volumes/GoogleDrive/My Drive/Poseidon/R Data/merged_clean.Rda")
+
+
+counts <- aggregate(length ~ GENUS + SPECIES, data=merged, FUN=length)
+#sum(counts$length) #[1] 9026
+
+```
+
+```{r length_reg, include=FALSE}
+one.lm <- lm(length ~ incentive,data = subset(merged,GENUS=="Aprion" & date>"2018-08-31"))
+summary(one.lm)
+coeftest(one.lm, vcov = vcovHC(one.lm, type="HC1"))
+
+two.lm <- lm(length ~ incentive,data = subset(merged,GENUS=="Aprion"))
+summary(two.lm)
+coeftest(two.lm, vcov = vcovHC(two.lm, type="HC1")) 
+
+three.lm <- lm(length ~ incentive,data = merged)
+summary(three.lm)
+coeftest(three.lm, vcov = vcovHC(three.lm, type="HC1"))
+
+robust_se <- list(sqrt(diag(vcovHC(one.lm, type = "HC1"))),
+                  sqrt(diag(vcovHC(two.lm, type = "HC1"))),
+                  sqrt(diag(vcovHC(three.lm, type = "HC1"))))
+```
+
+
+```{r length_reg_FE, include=FALSE}
+one.fe <- lm(length ~ incentive + factor(vessel_ID),data = subset(merged,GENUS=="Aprion" & date>"2018-08-31"))
+summary(one.fe)
+coeftest(one.fe, vcov = vcovHC(one.fe, type="HC1"))
+
+two.fe <- lm(length ~ incentive + factor(vessel_ID),data = subset(merged,GENUS=="Aprion"))
+summary(two.fe)
+coeftest(two.fe, vcov = vcovHC(two.fe, type="HC1")) 
+
+three.fe <- lm(length ~ incentive + factor(vessel_ID),data = merged)
+summary(three.fe)
+coeftest(three.fe, vcov = vcovHC(three.fe, type="HC1"))
+
+robust_se_fe <- list(sqrt(diag(vcovHC(one.fe, type = "HC1"))),
+                  sqrt(diag(vcovHC(two.fe, type = "HC1"))),
+                  sqrt(diag(vcovHC(three.fe, type = "HC1"))))
+```
+
+
+```{r catch_reg, include=FALSE}
+
+total.catch <- aggregate(length ~ vessel_ID + incentive, data=subset(merged,date>"2018-08-31"), FUN=length, drop=FALSE)
+total.catch[is.na(total.catch)] <- 0
+
+one.catch <- lm(length ~ incentive,data = total.catch)
+summary(one.catch)
+coeftest(one.catch, vcov = vcovHC(one.catch, type="HC1"))
+
+total.aprion <- aggregate(length ~ vessel_ID + incentive, data=subset(merged,GENUS=="Aprion" & date>"2018-08-31"), FUN=length, drop=FALSE)
+total.aprion[is.na(total.aprion)] <- 0
+
+two.catch <- lm(length ~ incentive,data = total.aprion)
+summary(two.catch)
+coeftest(two.catch, vcov = vcovHC(two.catch, type="HC1"))
+
+cpue <- aggregate(length ~ vessel_ID + incentive + date, data=subset(merged,date>"2018-08-31" ), FUN=length)
+
+three.catch <- lm(length ~ incentive,data = cpue)
+summary(three.catch)
+coeftest(three.catch, vcov = vcovHC(three.catch, type="HC1"))
+
+
+robust_se_catch <- list(sqrt(diag(vcovHC(one.catch, type = "HC1"))),
+                  sqrt(diag(vcovHC(two.catch, type = "HC1"))),
+                  sqrt(diag(vcovHC(three.catch, type = "HC1"))))
+```
+
+## Changes in Length
+
+We start by visualizing the length-frequency distributions for fish caught by fishers facing the price premiums and by those not facing the premiums. In Figure \ref{fig:ALL}, we display length-frequency distributions for all fish caught by all participants, color-coded by whether fishers faced the premium or not. We include all available data from 2016-2018. For the purposes of visualization only, we restrict the sample to fish less than 1.5m in length; this excludes less than 0.05% of the data-set. It can be seen that the distribution is shifted to the right when fishers face the premium. There is a lower frequency of smaller-sized fish (especially in the ranges of 30-40cm and 55-75cm) and a higher frequency of fish longer than 80cm.
+
+```{r figlengthall, echo=FALSE, message=FALSE, results='asis', fig.width=4.5, fig.asp=0.75, fig.cap="\\label{fig:ALL}Length frequency distribution of all fish caught for groups with (orange) and without (grey) the price premium."}
+
+
+# Sky blue and 
+#cols <- c( "Incentive" = "#56B4E9","No Incentive" = "#D55E00")
+# grey and orange
+cols <- c( "Incentive" = "#E69F00","No Incentive" = "#999999")
+# grey and Bluish Green
+#cols <- c( "Incentive" = "#009E73","No Incentive" = "#999999")
+# grey and Vermillion
+#cols <- c( "Incentive" = "#D55E00","No Incentive" = "#999999")
+
+
+ggplot(data=subset(merged,length<150), aes(length, fill = incentive_text,color=incentive_text,stat(density))) +
+  geom_histogram(binwidth = 10,alpha = 0.8,position="identity") +
+  ylab("Probability Density") +
+  scale_fill_manual("Treatment Group",values = cols) + 
+scale_color_manual("Treatment Group", values = c( "Incentive" = "dark orange","No Incentive" = "black")) +   
+    theme(legend.position="bottom") + scale_x_continuous(name ="Length (cm)", breaks=c(25,50,75,100,125))
+```
+
+In Figure \ref{fig:aprion}, we present the same length-frequency distribution, except this time we restrict the sample to just *Aprion virescens* caught. This is one of the species covered by the price premium. A similar but stronger relationship can now be observed. The orange distribution is shifted to the right and is left-truncated at around 75cm. When fishers faced the price premium for *Aprion virescens* larger than 80cm, they did not catch any fish sized below 75cm and the vast majority of the fish they caught were greater than or equal to 80cm in length. The incentive is not causing fishers to catch more *Aprion virescens* of every size, instead it appears to be encouraging size-selective targeting. We do not plot the distribution for *Lutjanus vitta* since it turns out that, during the experimental period, none were caught by fishers when they faced the premium and only two were caught by fishers when they didn't face the premium. Thus, it is impossible to make a comparison of the length frequencies. When we proposed the experimental design to the fishers, a number of them commented that they are unable to specifically target *Lutjanus vitta* and the premium would have no effect on their catch of this species. This appears to be the case.
+
+```{r histaprion, echo=FALSE, message=FALSE, results='asis', fig.width=4.5, fig.asp=0.75, fig.cap="\\label{fig:aprion}Length frequency distribution of *Aprion Virescens* for groups with (orange) and without (grey) the price premium."}
+ ggplot(data=subset(merged,length<150 & GENUS=="Aprion"), aes(length, fill = incentive_text,color=incentive_text,stat(density))) +
+  geom_histogram(binwidth = 5,alpha = 0.8,position="identity") +
+  xlab("Length (cm)") + ylab("Probability Density") +
+  scale_fill_manual("Treatment Group",values = cols) + 
+scale_color_manual("Treatment Group", values = c( "Incentive" = "dark orange","No Incentive" = "black")) +
+    theme(legend.position="bottom")
+```
+
+Next, in order to test whether the visual differences observed in the length-frequency plots are statistically significant, we run ordinary least squares regressions of the length of fish caught on an indicator variable for whether a fisher faced the price premiums on that date. The three columns in Table \ref{tab:length} represent three different samples: (1) catch of *Aprion virescens* during the months the incentive was offered, (2) catch of *Aprion virescens* from all months and years, and (3) catch of all species from all months and all years. The estimated coefficients are displayed with their associated standard errors below in parentheses. The standard errors (in this table and in all of the regression tables that follow) have been adjusted using the Eicker-Huber-White method to account for potential heteroskedasticity. 
+It can be seen that the visual differences observed in the length histograms are evidence of statistically significant differences in the mean length of both *Aprion virescens* and all fish caught. In terms of interpretation, Column (1) implies that the average length of *Aprion virescens* caught during the study period by fishers who did not face the premium was 74.8cm and the average length caught by fishers who did face the premium was 11.1cm longer, i.e. 85.9cm. This is equivalent to a 15% increase in average length. When we use data from all time periods in Column (2), we find that \emph{Aprion virescens} are 8.4cm longer when fishers face the incentive compared to the average length of 77.5cm. In terms of all fish caught, the average length of fish caught by fishers who did not face the premium was 61.1cm and the average length caught by fishers who did face the premium was 4.9cm longer, i.e. 66cm. This corresponds to an 8\% increase in the average length of all fish caught. Again, we are unable to run a similar analysis for *Lutjanus vitta* because we do not have any data on length of this species caught when fishers faced the premium since they did not catch any. Thus, the price premium for *Aprion virescens* appears to have significantly altered the length distribution of fish caught towards larger-sized fish. There is no real financial incentive for fishers to hide their smaller-sized fish when facing the premium since this would cause a discrepancy between dealer catch records and photograph-based records, jeopardizing their stipend from TNC. As a robustness check, we replicate Table \ref{tab:length} in Table \ref{tab:length_fe} except that all regressions now include fisher-specific fixed effects. This allows us to test whether the changes in length are due to individual fishers catching longer fisher than normal when they face the premium or whether the premium is simply causing a change in the composition of fishers at different points in time (those that can target larger fish decide to fish more when they face the premium). The estimated coefficients are less statistically significant than before (due to both a reduction in the degrees of freedom and the introduction of multicollinearity) but the magnitudes are roughly the same as before. This suggests that the changes in length are due to changes at the individual fisher level.
+
+```{r, echo=FALSE, results='asis'}
+stargazer(one.lm, two.lm, three.lm, title="Changes in Length of Fish Caught",
+          intercept.bottom = FALSE, label="tab:length",
+          se        = robust_se,
+          dep.var.labels.include = FALSE, dep.var.caption = "",
+          covariate.labels = c("Constant","Price Premium"),
+          add.lines = list(c("Species Included", "Aprion virescens", "Aprion virescens","All"), c("Dates", "Sept - Dec 2018","All", "All")),
+          omit.stat=c("LL","ser","f","adj.rsq"), no.space=TRUE,header=FALSE)
+```
+
+```{r, echo=FALSE, results='asis'}
+stargazer(one.fe, two.fe, three.fe, title="Changes in Length of Fish Caught Including Fisher-Specific Fixed Effects",
+          intercept.bottom = FALSE, label="tab:length_fe",
+          se        = robust_se_fe,
+          dep.var.labels.include = FALSE, dep.var.caption = "",
+          covariate.labels = c("Constant","Price Premium"),
+          keep = c("incentive","Constant"),
+          add.lines = list(c("Fisher Fixed Effects?", "Included", "Included","Included"), c("Species Included", "Aprion virescens", "Aprion virescens","All"), c("Dates", "Sept - Dec 2018","All", "All")),
+          omit.stat=c("LL","ser","f","adj.rsq"), no.space=TRUE,header=FALSE)
+```
+
+Although it was not the hypothesis that our randomization was intended to test, we also test whether the price premium was correlated with an increase in total catch. Table \ref{tab:catch} presents similar results to Table \ref{tab:length} where we regress three different measures of catch on an indicator variable for being offered the price premium. We restrict the sample to the experimental time period (September to December 2018). In Column (1) the outcome variable is total number of fish caught, in Column (2) it is the total number of *Aprion virescens* caught, and in Column (3) it is catch per fishing trip. In all regressions, we fail to reject the null hypothesis that there was no change in total catch (or catch per unit of effort) when fishers were offered the price premium. This is very limited evidence in support of the conclusion that the premium caused a shift in the size distribution of catch without causing an increase in the total number of fish caught.
+
+```{r, echo=FALSE, results='asis'}
+stargazer(one.catch, two.catch, three.catch, title="Changes in Total Catch",
+          intercept.bottom = FALSE, label="tab:catch",
+          se        = robust_se_catch,
+#          dep.var.labels.include = FALSE, dep.var.caption = "",
+dep.var.labels.include = FALSE,
+column.labels   = c("Total Catch","Total Catch","Catch per Fishing Trip"),
+          covariate.labels = c("Constant","Price Premium"),
+          add.lines = list(c("Species Included", "All", "Aprion virescens","All")),
+          omit.stat=c("LL","ser","f","adj.rsq"), no.space=TRUE,header=FALSE)
+```
+
+## Changes in Fishing Behavior
+
+A natural question to ask is what are fishers doing in order to catch more larger-sized *Aprion virescens* and fewer smaller-sized fish? Before the experiment began, we informally surveyed fishers about what actions they might take in order to target larger *Lutjanus vitta* and *Aprion virescens*. They stated that it would be impossible to target larger *Lutjanus vitta* since they are small fish to begin with and difficult to specifically target. On the other hand, they stated that it might be possible to target larger *Aprion virescens* because there are spots where they are more abundant and because they tend to be larger, so methods to target larger fish in general should work to target larger sizes of this species. We solicited information on where these "hot spots" are and now statistically test whether fishers were more likely to go to these spots when they faced the price premium. 
+
+We start by using the vessel tracking data to measure whether fishers are fishing closer or further from their home port when they face the price premium by running a regression of distance traveled on a dummy variable for the price premium (see Figure \ref{fig:bathy} for a visualization of fishing locations for the treatment and control groups). In Column (1) of Table \ref{tab:spatial}, we observe that fishers are travelling 10.6km less from their home port when they face the price premium. This accords with our informal surveys since all of the *Aprion virescens* hot spots are relatively close to the village compared to other snapper/grouper fishing locations that are not adjacent to the island. It can be seen in Figure \ref{fig:bathy} that there are some distant spots that fishers only travel to when they do not face the premiums. We next test whether fishers are more likely to go to any of the three hot spots identified through surveys and mapping of areas with high catch of *Aprion virescens* (Figure \ref{fig:bathy}). We drew boundaries around the three hot spots and define each vessel location as either inside (value=1) or outside the hot spot (value=0). Columns (2)-(4) of Table \ref{tab:spatial} present the results of regressing an indicator variable for Hot Spots 1 to 3 on an indicator variable for facing the price premium. We can see that we only observe a statistically significant effect for Hot Spot 2. The coefficient implies that fishers are eight times more likely to go to Hot Spot 2 when they face the price premium. Interestingly, this is also the deepest of the three hot spots identified, suggesting that the premium is encouraging fishers to go to spots with high abundance of *Aprion virescens* as well as a higher likelihood of larger fish given the additional depth.
+
+```{r load_spot_trace, include=FALSE}
+library(data.table)
+spot.trace <- read.csv("/Volumes/GoogleDrive/My Drive/Poseidon/Price Premium Spot Trace Data/Spot Track_All Boat_with Distance_RE_21032019_1.csv")
+
+spot.trace$boat_id <- as.numeric(spot.trace$boat)
+spot.trace$date <- as.Date(spot.trace$date)
+
+summary(spot.trace)
+hist(spot.trace$Distance..km.)
+
+```
+
+```{r distance_reg, include=FALSE}
+distance.lm <- lm(Distance..km. ~ Incentives, data=spot.trace)
+summary(distance.lm)
+```
+
+```{r checkspot1, echo=FALSE, message=FALSE}
+topleft1 = c(-1.791764, 123.999155)
+bottomright1 = c(-1.822010, 124.013556)
+
+hotspot1 <- c(topleft1,bottomright1)
+
+spot.trace$checkspot1 <- ifelse(spot.trace$latitude <= hotspot1[1],1,0) + ifelse(spot.trace$latitude >= hotspot1[3],1,0) + ifelse(spot.trace$longitude <= hotspot1[4],1,0) + ifelse(spot.trace$longitude >= hotspot1[2],1,0)
+
+#hist(spot.trace$checkspot1)
+
+spot.trace$hotspot1 <- ifelse(spot.trace$checkspot1 == 4,1,0)
+```
+
+```{r checkspot2, echo=FALSE, message=FALSE}
+
+topleft2 = c(-1.823164, 124.150632)
+bottomright2 = c(-1.858445, 124.266966)
+
+hotspot2 <- c(topleft2,bottomright2)
+
+spot.trace$checkspot2 <- ifelse(spot.trace$latitude <= hotspot2[1],1,0) + ifelse(spot.trace$latitude >= hotspot2[3],1,0) + ifelse(spot.trace$longitude <= hotspot2[4],1,0) + ifelse(spot.trace$longitude >= hotspot2[2],1,0)
+
+#hist(spot.trace$checkspot2)
+
+spot.trace$hotspot2 <- ifelse(spot.trace$checkspot2 == 4,1,0)
+
+```
+
+```{r checkspot3, echo=FALSE, message=FALSE}
+
+topleft3 = c(-1.879458, 124.274299)
+bottomright3 = c(-1.920147, 124.313006)
+
+hotspot3 <- c(topleft3,bottomright3)
+
+spot.trace$checkspot3 <- ifelse(spot.trace$latitude <= hotspot3[1],1,0) + ifelse(spot.trace$latitude >= hotspot3[3],1,0) + ifelse(spot.trace$longitude <= hotspot3[4],1,0) + ifelse(spot.trace$longitude >= hotspot3[2],1,0)
+
+#hist(spot.trace$checkspot3)
+
+spot.trace$hotspot3 <- ifelse(spot.trace$checkspot3 == 4,1,0)
+
+```
+
+```{r hotspot_reg, include=FALSE}
+
+hot.one.lm <- lm(hotspot1 ~ Incentives,data=spot.trace)
+hot.two.lm <- lm(hotspot2 ~ Incentives,data=spot.trace)
+hot.three.lm <- lm(hotspot3 ~ Incentives,data=spot.trace)
+spatial_robust_se <- list(sqrt(diag(vcovHC(distance.lm, type = "HC1"))),sqrt(diag(vcovHC(hot.one.lm, type = "HC1"))),
+                  sqrt(diag(vcovHC(hot.two.lm, type = "HC1"))),
+                  sqrt(diag(vcovHC(hot.three.lm, type = "HC1"))))
+```
+
+```{r stargazer_spatial, echo=FALSE, results='asis'}
+stargazer(distance.lm, hot.one.lm, hot.two.lm, hot.three.lm, title="Changes in Spatial Behavior",
+          intercept.bottom = FALSE, label="tab:spatial",
+          se        = spatial_robust_se,
+          dep.var.labels.include = TRUE, dep.var.caption = " ",
+          dep.var.labels  = c("Distance Traveled","Hot Spot 1","Hot Spot 2","Hot Spot 3"),
+          covariate.labels = c("Constant","Price Premium"),
+          omit.stat=c("LL","ser","f","adj.rsq"), no.space=TRUE,header=FALSE)
+```
+
+We further test depth as an explanation for the differences in catch length by merging the vessel tracking data with data on bathymetry provided by the General Bathymetric Chart of the Oceans [@weatherall2015new]. The fishing locations and bathymetric map are shown in Figure \ref{fig:bathy}. We then run a series of regression tests in Table \ref{tab:depth} to evaluate whether fishers are targeting different depths when they face the price premium. Column (1) presents a simple regression of depth on an indicator variable for whether the fisher faced a price premium on that day. We can see that the average depth fished for the four months of the experiment was 55m and that there appears to be no statistically significant difference in average depth between the treatment and control groups. In Figure \ref{fig:depth} we plot histograms of the depth fished for the two different groups. For the purposes of data visualization only, the data is truncated at 0m and 150m depth. We can see that there is no clear visual difference in mean or median depth. However, the histograms suggest that when fishers face the premium they are more likely to fish at depths greater than 50m but less then 150m. 
+
+In Column (2) we push the depth analysis a little further by defining our outcome variable as an indicator for whether depth is deeper than 50m but less than 100m. We can see that there is a statistically significant increase (45%) in the probability that a fisher fishes at this depth when they face the premium. In Column (3) we define the outcome variable as an indicator for whether depth is deeper than 50m but less than 150m. Again, there is a statistically significant increase suggesting that fishers are 33% more likely to fish at this depth when they face the premium. This further confirms that fishers are using depth as a mechanism to target certain sizes of fish. In Column (4) we test whether fishers are less likely to fish at shallow depths (above 25m) and although the coefficient is negative, it is not statistically significant.
+
+```{r, include=FALSE}
+library(marmap)
+library(AER)
+GEBCO.bathy <- readGEBCO.bathy("/Volumes/GoogleDrive/My Drive/Poseidon/Maps/Depth Analysis/GEBCO_2019_123.6293_-1.1384_125.8476_-2.6376.nc")
+sp <- get.depth(GEBCO.bathy, spot.trace[,9:8], locator = FALSE)
+setnames(sp, old=c("lon","lat"), new=c("longitude", "latitude"))
+
+merged_depth <- merge(spot.trace, sp)
+
+merged_depth$deeper50 <- ifelse(merged_depth$depth < -50,1,0)
+
+merged_depth$deeper50not100 <- ifelse(merged_depth$depth < -50 & merged_depth$depth > -100,1,0)
+
+merged_depth$deeper50not150 <- ifelse(merged_depth$depth < -50 & merged_depth$depth > -150,1,0)
+
+merged_depth$above25 <- ifelse(merged_depth$depth > -25,1,0)
+
+merged_depth$incentive_text <- "No Incentive"
+merged_depth <- within(merged_depth, incentive_text[Incentives==1] <- "Incentive")
+#cols <- c( "Incentive" = "green","No Incentive" = "red")
+
+depth.one.lm <- lm(depth ~ Incentives,data=merged_depth)
+depth.two.lm <- lm(deeper50not100 ~ Incentives,data=merged_depth)
+depth.three.lm <- lm(deeper50not150 ~ Incentives,data=merged_depth)
+depth.four.lm <- lm(above25 ~ Incentives,data=merged_depth)
+
+depth_robust_se <- list(sqrt(diag(vcovHC(depth.one.lm, type = "HC1"))),sqrt(diag(vcovHC(depth.two.lm, type = "HC1"))),
+                  sqrt(diag(vcovHC(depth.three.lm, type = "HC1"))),
+                  sqrt(diag(vcovHC(depth.four.lm, type = "HC1"))))
+
+```
+
+```{r histdepth, echo=FALSE, message=FALSE, results='asis', fig.width=4.5, fig.asp=0.75, fig.cap="\\label{fig:depth}Distribution of depth fished for groups with (orange) and without (grey) the price premium."}
+ggplot(data=subset(merged_depth,depth<0 & depth>-175), aes(depth, fill =
+         incentive_text,color=incentive_text,stat(density))) +
+  geom_histogram(binwidth = 10,alpha = 0.8,position="identity") +
+  xlab("Depth (m)") + ylab("Probability Density") +
+  scale_fill_manual("Treatment Group",values = cols) +
+scale_color_manual("Treatment Group", values = c( "Incentive" = "dark orange","No Incentive" = "black")) +
+  theme(legend.position="bottom")
+```
+
+```{r figbathy, echo=FALSE, message=FALSE, results='asis', fig.width=7.5, fig.asp=1, fig.cap="\\label{fig:bathy}Map Showing Bathymetry and Fishing Locations During the Experiment. Fishing locations when fishers faced the premiums are depicted with orange circles and with grey squares when they did not face the premiums. The village is shown with a yellow diamond and the three hotspots are shown as orange rectangles with Spot 1 the furthest west and Spot 3 the furthest east. Source: General Bathymetric Chart of the Oceans."}
+plot(GEBCO.bathy, image = T, land = F, xlim=c(123.75,125.1), ylim=c(-2.2,-1.4))
+incentive <- subset(spot.trace,Incentives==1)
+no.incentive <- subset(spot.trace,Incentives==0)
+#points(spot.trace$longitude, spot.trace$latitude, pch = 21, col = "black", bg = "yellow", cex = 0.6)
+points(no.incentive$longitude, no.incentive$latitude, pch = 22, col = "black",
+       bg = "#999999", cex = 0.7)
+points(incentive$longitude, incentive$latitude, pch = 21, col = "black",
+       bg = "#E69F00", cex = 0.7)
+points(124.023860,-1.844229, pch = 23, col = "black", bg = "yellow", cex = 0.9)
+
+lines(c(hotspot1[2],hotspot1[4],hotspot1[4],hotspot1[2],hotspot1[2]),c(hotspot1[1],hotspot1[1],hotspot1[3],hotspot1[3],hotspot1[1]), col = "orange", cex = 5)
+lines(c(hotspot2[2],hotspot2[4],hotspot2[4],hotspot2[2],hotspot2[2]),c(hotspot2[1],hotspot2[1],hotspot2[3],hotspot2[3],hotspot2[1]), col = "orange", cex = 5)
+lines(c(hotspot3[2],hotspot3[4],hotspot3[4],hotspot3[2],hotspot3[2]),c(hotspot3[1],hotspot3[1],hotspot3[3],hotspot3[3],hotspot3[1]), col = "orange", cex = 5)
+```
+
+
+```{r stargazer_depth, echo=FALSE, results='asis'}
+library(stargazer)
+stargazer(depth.one.lm, depth.two.lm, depth.three.lm, depth.four.lm, title="Changes in Fishing Depth",
+          intercept.bottom = FALSE, label="tab:depth",
+          se        = depth_robust_se,
+          dep.var.labels.include = TRUE, dep.var.caption = " ",
+          dep.var.labels  = c("Depth","50-100m Depth","50-150m Depth","Above 25m"),
+          covariate.labels = c("Constant","Price Premium"),
+          omit.stat=c("LL","ser","f","adj.rsq"), no.space=TRUE,header=FALSE)
+
+```
+
+# Discussion
+
+## Possible Effect on Data-Poor Stock Assessment Methods
+
+Our results show that prices can alter length-frequency distributions for some species, confirming a possible source of bias in length-based stock assessment models.  For example, we know that from September to December 2018 the underlying stock of *Aprion virescens* did not change but if we use data from the fishers who faced the premium to perform a data-poor stock assessment we will reach a different conclusion about the status of the stock compared to using the data from fishers who did not face the premium. Interestingly, our results suggest that the direction of the bias will depend on the stock assessment method used. For example, an assessment method that looks at the abundance of juveniles [@sammons1998larval] would conclude that the stock is healthier when fishers don't face the premium since they catch a higher number of juvenile fish. On the other hand, an assessment method that looks at the proportion of mature fish (spawning stock biomass) to juveniles would conclude that the stock is healthier when fishers face the premium because the relative proportion of mature fish is much higher.^[See @erisman2014influence for an example.]
+
+## Caveats and Limitations
+
+There are a number of caveats to our results. The first is the extremely small sample size, both in terms of the number of participants (17 invited and six with catch records) and the amount of fish caught during the study period (222). The corollary is that the fishers are fairly homogeneous, fishing in the exact same area with the same gear and under the same environmental conditions, thus many factors are being held fixed. Furthermore, this is the first study of its kind and hopefully its novelty compensates for the sample size. It should also be noted that we are observing statistically significant differences even with the small sample size, being very cautious about how we calculate standard errors, and after including fisher-specific fixed effects. 
+
+A second caveat is the degree to which these findings can be scaled up or extrapolated to other settings. We do not know how other types of fishers or similar fishers in other parts of the world would be affected by similar price premiums. The fishers who participated in this experiment had a long-term working relationship with the TNC staff who carried out the experiment, and we think this lowered their reservations about participation. We received anecdotal confirmation that fishers shared information with each other about the best spots and methods for targeting larger-sized fish and this degree of cooperation is unlikely to be present in many other fisheries. Different fishing gears will obviously have different abilities to target both species and size. If the costs of targeting larger-sized fish are different then the premiums may need to be changed in order to induce similar changes in behavior. A price premium for larger fish may result in higher fishing pressure, because the higher prices may encourage more fishing effort and keep fishers in business longer even if catch rates are declining. Thus, it should be strongly stressed that price premiums in other fisheries may have net negative effects by causing an increase in catch of all sizes, instead of the size-selective targeting observed in our study. This is especially likely for species that form spawning aggregations that are easily accessible (as, for example, in reef dwelling snappers and groupers, see @de2008global). Fishers in this study may have been limited in their ability to expand effort in response to higher prices because of limits on the availability of ice and bait as well as the small size of their vessels. Important equity issues may arise from implementing price premiums. For example, fishers could perceive that the premium only benefits certain types of fishers (i.e. larger vessels that can target fish at deeper depths). Traditional policies that punish fishers for catching smaller fish (such as size limits) may be perceived as more equitable.
+
+An related issue is the cost of implementing price premiums on a larger scale and over a longer time period. Funding for the premium would most likely have to come from the government or NGO sector, although premiums could eventually become self-financing if they were linked to an eco-label that commands a higher price in retail markets. Changes in fish prices may disrupt existing power dynamics within a fishery and it would be important to ensure buy-in from processors and middlemen. We deliberately chose quite high premiums and it is certainly possible that a lower premium for *Aprion virescens* might have worked just as well. Implementation will require similar monitoring to a typical size limit (measurement of fish is still required in order to pay the premium) but monitoring and enforcement costs should be lower since monitoring can take place at the point of landing instead of at sea and compliance should be higher (since the premium is a voluntary mechanism). An easier to implement option, which we hope will be the focus of future research, might be to be to introduce a price penalty for smaller-sized fish. For example, instead of a strict size limit, all fish buyers could simply agree to offer a price of zero for any fish below a certain size. This raises its own set of perverse incentives and caveats but this may be a more practical and cost-effective way of implementing the demand-side approach on a larger scale.
+
+A third caveat is that the observed changes in length may be due to deliberate misreporting by the participants, perhaps due to an experimenter demand effect [@zizzo2010experimenter]. We took a number of steps to minimize the possibility of this happening. First, we did not introduce any punishment for catching fish below the size limits. The fact that fish below the limit for *Aprion virescens* were still caught by the control group suggests that the experiment did not alter fishers' concerns about catching undersized fish. Second, as mentioned earlier, the fishers are financially incentivized to photograph every single fish they catch. Any discrepancy between buyer data and photograph data jeopardizes their monthly stipend. Third, the fishers were not aware that the number of fish caught below the size limit was an outcome of interest in the experiment.
+
+Finally, our experiment was limited in scope, and fisher's participation was heavily influenced by weather, availability of ice, and availability of bait.  Due to these externalities, we could not assess more subtle effects of the price incentive on overall income and on equity. Our results on total catch should be interpreted with caution, especially since this was not the outcome variable our randomization was intended to impact. Our focus was on the length of fish caught. Further, our null findings for *Lutjanus vitta*
+should  definitely not be interpreted as proof that price premiums cannot shift targeting of smaller-sized species. In other settings, it may still be possible to target specific sizes of smaller species if they exhibit ontogenetic shifts in their various life stages. 
+
+## Conclusions
+
+We performed the first ever randomized-control trial of a market-based mechanism designed to simulate the effects of a size limit. We randomly offered fishers on a small island in central Sulawesi a price premium for catching certain species of fish above certain sizes. We observe stark differences in catch as a result of the premium. Instead of inducing fishers to catch more fish of every size, the premium caused a shift in the size distribution of catch towards larger, more mature fish. The price premium worked well for a larger-sized species but had no effect on the catch distribution of a smaller-sized species, suggesting that fishers in this context are not able to target species but are able to target sizes of fish. In particular, we find that the length of *Aprion virescens* increased by 15% and the average length of all fish caught increased by 8% when fishers faced the price premium. Despite the various caveats discussed above, the overall message is promising: in a setting where it is almost impossible to have regulatory enforcement of a size limit, it has been proven to be possible to achieve the same outcome through altering the financial incentives that fishers face to catch different-sized fish. Working with the demand side of fish markets to alter the incentives fishers face for catching different sizes of fish presents a new and exciting tool to support sustainable management of small-scale fisheries. 
+
+\newpage
+
+# Acknowledgements
+
+We acknowledge the David and Lucile Packard Foundation for supporting this experiment and the CODRS data collection program. The CODRS program has also received support from the Walton Family Foundation and the USAID\textbackslash Indonesia SNAPPER program (Cooperative Agreement No. AID-497-A-16-00011). We wish to thank Petronella “Mea” Padja, Wawan B. I Gede, Jens Koed Madsen, Michaela Clemence, Christopher Costello, and our colleagues at the Ocean Conservancy, especially Aarthi Ananthanarayanan. We also thank the community of fishers in the village along with their families for their participation in the experiment and hospitality during our visits.
+
+\newpage
+
+# References
+
+
+
